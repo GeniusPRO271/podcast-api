@@ -6,7 +6,7 @@ const authRouter = require('./routes/auth_routes');
 const showsRouter = require('./routes/shows_routes');
 const { auth } = require('express-openid-connect');
 const profileRouter = require('./routes/profile_routes');
-const path = require('path');
+const webRouter = require('./routes/web_routes');
 require('dotenv').config();
 
 const app = express();
@@ -20,7 +20,11 @@ const config = {
   issuerBaseURL: process.env.ISSUER_BASE_URL,
 };
 
-app.use(auth(config));
+app.use(
+  auth(config, {
+    response_mode: 'query',
+  })
+);
 
 mongoose.connect(process.env.MONGOURI, {
   useNewUrlParser: true,
@@ -37,14 +41,8 @@ app.use((req, res, next) => {
     next();
   }
 });
-app.get('/', (req, res) => {
-  if (req.oidc.isAuthenticated()) {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-  } else {
-    res.redirect('/login');
-  }
-});
-app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/', webRouter);
 app.use('/auth', authRouter);
 app.use('/profile', profileRouter);
 app.use('/series', seriesRouter);
