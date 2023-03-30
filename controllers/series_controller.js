@@ -50,11 +50,11 @@ async function create(req, res) {
       CleanUploadsDirectory('uploads');
       res.status(201).json({ message: 'success' });
     } else {
-      res.status(300).json({ error: 'Missing or invalid fields' });
+      res.status(400).json({ error: 'Missing or invalid fields' });
     }
   } catch (err) {
     console.error(err);
-    res.status(100).json({ error: 'Internal server error' });
+    res.status(500).json({ error: 'Internal server error' });
   }
 }
 
