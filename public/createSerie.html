@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Public Page</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+    />
+    <style>
+      body {
+        margin: 0;
+        background-color: #fff;
+      }
+      .container {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        margin-top: 50px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="columns">
+        <div class="column is-one-fifth">
+          <aside>
+            <figure class="image is-160x160 mb-2">
+              <img
+                src="https://res.cloudinary.com/dpoefum0k/image/upload/v1680084810/podcast-api/LogoESDH2022_se2vuk.png"
+                alt="Logo"
+                class="menu-label"
+              />
+            </figure>
+            <ul class="menu-list">
+              <li><a href="/createSerie">CREATE SERIE</a></li>
+              <li><a href="/createShow">CREATE SHOW</a></li>
+              <li><a href="#">DELETE SHOW</a></li>
+              <li><a href="#">DELETE SERIE</a></li>
+              <li><a href="#">EDIT SERIE</a></li>
+              <li><a href="#">EDIT SHOW</a></li>
+            </ul>
+          </aside>
+        </div>
+        <div class="column">
+          <h1 class="title">Create Serie</h1>
+          <form id="create-show-form">
+            <div class="field">
+              <label for="title" class="label">Title</label>
+              <div class="control">
+                <input
+                  type="text"
+                  class="input"
+                  id="title"
+                  name="title"
+                  required
+                />
+              </div>
+            </div>
+            <div class="field">
+              <label class="label" for="serieDays">Serie Days</label>
+              <div class="control">
+                <div class="select is-multiple">
+                  <select id="serieDays" name="serieDays[]" multiple>
+                    <option value="monday">Monday</option>
+                    <option value="tuesday">Tuesday</option>
+                    <option value="wednesday">Wednesday</option>
+                    <option value="thursday">Thursday</option>
+                    <option value="friday">Friday</option>
+                    <option value="saturday">Saturday</option>
+                    <option value="sunday">Sunday</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <label for="serieStart" class="label">Serie Start and End</label>
+              <div class="control">
+                <input
+                  type="time"
+                  class="input"
+                  id="serieStart"
+                  name="serieStart"
+                  value="12:00"
+                />
+
+                <input
+                  type="time"
+                  class="input"
+                  id="serieEnd"
+                  name="serieEnd"
+                  value="13:00"
+                />
+              </div>
+            </div>
+            <div class="field">
+              <label for="imagesMain" class="label">Cover Image</label>
+              <div class="control">
+                <input
+                  type="file"
+                  class="input"
+                  id="imagesMain"
+                  name="imagesMain"
+                  accept=".jpg,.jpeg,.png"
+                  required
+                />
+              </div>
+            </div>
+            <div class="field">
+              <label for="sampleImages" class="label">Sample Images</label>
+              <div class="control">
+                <input
+                  type="file"
+                  class="input"
+                  id="sampleImages"
+                  name="sampleImages"
+                  multiple
+                  accept=".jpg,.jpeg,.png"
+                  required
+                />
+              </div>
+            </div>
+            <div class="field">
+              <label for="description" class="label">Description</label>
+              <div class="control">
+                <textarea
+                  class="textarea"
+                  id="description"
+                  name="description"
+                  required
+                ></textarea>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="members" class="label">Members</label>
+              <div>
+                <input
+                  type="checkbox"
+                  id="member1"
+                  name="members[]"
+                  value="John"
+                />
+                <label for="member1">John</label>
+              </div>
+              <div>
+                <input
+                  type="checkbox"
+                  id="member2"
+                  name="members[]"
+                  value="Jane"
+                />
+                <label for="member2">Jane</label>
+              </div>
+              <div>
+                <input
+                  type="checkbox"
+                  id="member3"
+                  name="members[]"
+                  value="Bob"
+                />
+                <label for="member3">Bob</label>
+              </div>
+            </div>
+            <div class="field">
+              <label for="youtubeLink" class="label">Youtube Link</label>
+              <div class="control">
+                <input
+                  type="text"
+                  class="input"
+                  id="youtubeLink"
+                  name="youtubeLink"
+                />
+              </div>
+            </div>
+            <div class="field">
+              <label for="brochure" class="label">Brochure Link</label>
+              <div class="control">
+                <input
+                  type="text"
+                  class="input"
+                  id="brochure"
+                  name="brochure"
+                />
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <button type="submit" id="submit-button" class="button is-link">
+                  Create
+                </button>
+              </div>
+            </div>
+            <div id="alert-container"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script>
+      const createShowForm = document.getElementById('create-show-form');
+      const sampleImagesInput = document.getElementById('sampleImages');
+
+      let sampleImages = [];
+      sampleImagesInput.addEventListener('change', function () {
+        sampleImages = [];
+        const files = sampleImagesInput.files;
+        for (let i = 0; i < files.length; i++) {
+          sampleImages.push(files[i]);
+        }
+      });
+      createShowForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const button = document.getElementById('submit-button');
+        button.classList.add('is-loading');
+
+        const formData = new FormData();
+        const title = document.getElementById('title').value;
+        const serieDaysSelect = document.getElementById('serieDays');
+        const serieDaysArray = Array.from(
+          serieDaysSelect.selectedOptions,
+          (option) => option.value
+        );
+        const serieStart = document.getElementById('serieStart').value;
+        const serieEnd = document.getElementById('serieEnd').value;
+        const description = document.getElementById('description').value;
+        const checkboxes = document.querySelectorAll(
+          'input[type="checkbox"][name="members[]"]:checked'
+        );
+        let members = [];
+
+        checkboxes.forEach((checkbox) => {
+          members.push(checkbox.value);
+        });
+
+        const youtubeLink = document.getElementById('youtubeLink').value;
+        const brochure = document.getElementById('brochure').value;
+        const imagesMain = document.getElementById('imagesMain').files[0];
+        formData.append('title', title);
+        formData.append('serieDays', serieDaysArray);
+        formData.append('serieStart', serieStart);
+        formData.append('serieEnd', serieEnd);
+        formData.append('imagesMain', imagesMain);
+        for (let i = 0; i < sampleImages.length; i++) {
+          formData.append('sampleImages[]', sampleImages[i]);
+        }
+        formData.append('description', description);
+        formData.append('members', members);
+        formData.append('youtubeLink', youtubeLink);
+        formData.append('brochure', brochure);
+
+        for (const [key, value] of formData.entries()) {
+          console.log(`${key}: ${value}`);
+        }
+        fetch('/series', {
+          method: 'POST',
+          body: formData,
+        })
+          .then((response) => {
+            button.classList.remove('is-loading');
+            if (response.status === 201) {
+              showAlert('success', 'Show created successfully!');
+            } else {
+              showAlert('danger', 'An error occurred while creating the show.');
+            }
+            console.log(response);
+          })
+          .catch((error) => {
+            button.classList.remove('is-loading');
+            console.error(error);
+            showAlert('danger', 'An error occurred while creating the show 2.');
+          });
+        createShowForm.reset();
+      });
+      function showAlert(type, message) {
+        const container = document.getElementById('alert-container');
+        container.innerHTML = message;
+        container.classList.add('notification', `is-${type}`, 'mt-3');
+      }
+    </script>
+  </body>
+</html>

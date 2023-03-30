@@ -1,4 +1,5 @@
 const { Show } = require('../models/show_models');
+const { UploadCloudinary, CleanUploadsDirectory } = require('../cloudinary');
 
 // Get all shows
 async function getAll(req, res) {
@@ -8,24 +9,35 @@ async function getAll(req, res) {
 }
 
 // Create a new show
+
 async function create(req, res) {
   console.log('create show');
-  console.log(req.body);
-
   try {
-    const { title, showDate, image, location, buyticketlink } = req.body;
-    const newShow = new Show({
-      title,
-      showDate,
-      image,
-      location,
-      buyticketlink,
-    });
-    await newShow.save();
-    res.status(201).json(newShow); // set status to 201 if a new item is created
+    const { title, showDate, location, buyticketlink } = req.body;
+
+    if (req.file) {
+      console.log(req.file.path);
+      // If a file was uploaded, upload the file to Cloudinary and set the image URL on the new Show object
+      const image_url = await UploadCloudinary(req.file.path);
+
+      const newShow = new Show({
+        title,
+        showDate,
+        image: image_url,
+        location,
+        buyticketlink,
+      });
+
+      // Save the new show data to the database
+      const savedShow = await newShow.save();
+      CleanUploadsDirectory('uploads');
+      res.status(201).json(savedShow);
+    } else {
+      res.status(400).json({ error: 'Missing or invalid fields' });
+    }
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: err.message }); // set status to 500 if there's an error
+    res.status(500).json({ error: 'Internal server error' });
   }
 }
 

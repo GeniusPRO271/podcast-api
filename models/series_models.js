@@ -11,11 +11,11 @@ const SeriesSchema = new mongoose.Schema({
     required: true,
   },
   serieStart: {
-    type: Date,
+    type: String,
     required: true,
   },
   serieEnd: {
-    type: Date,
+    type: String,
     required: true,
   },
   imagesMain: {

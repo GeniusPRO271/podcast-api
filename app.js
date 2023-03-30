@@ -7,6 +7,7 @@ const showsRouter = require('./routes/shows_routes');
 const { auth } = require('express-openid-connect');
 const profileRouter = require('./routes/profile_routes');
 const webRouter = require('./routes/web_routes');
+const { CleanUploadsDirectory } = require('./cloudinary');
 require('dotenv').config();
 
 const app = express();

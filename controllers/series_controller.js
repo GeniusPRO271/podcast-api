@@ -1,3 +1,4 @@
+const { CleanUploadsDirectory, UploadCloudinary } = require('../cloudinary');
 const { Serie } = require('../models/series_models');
 
 // Get all series
@@ -8,39 +9,52 @@ async function getAll(req, res) {
 
 // Create a new series
 async function create(req, res) {
-  const {
-    title,
-    serieDays,
-    serieStart,
-    serieEnd,
-    imagesMain,
-    images,
-    description,
-    members,
-    youtubeLink,
-    brochure,
-  } = req.body;
-
   try {
-    const newSerie = new Serie({
+    const {
       title,
       serieDays,
       serieStart,
       serieEnd,
-      imagesMain,
-      images,
       description,
       members,
       youtubeLink,
       brochure,
-    });
+    } = req.body;
 
-    await newSerie.save();
+    if (req.files) {
+      const sampleImages = [];
+      const imagesMain = await UploadCloudinary(
+        req.files['imagesMain'][0].path
+      );
+      for (let i = 0; i < req.files['sampleImages[]'].length; i++) {
+        const img = req.files['sampleImages[]'][i];
+        const url = await UploadCloudinary(img.path);
+        sampleImages.push(url);
+      }
 
-    res.status(201).json(newSerie);
+      const newSerie = new Serie({
+        title,
+        serieDays: serieDays.split(','),
+        serieStart,
+        serieEnd,
+        imagesMain,
+        images: sampleImages,
+        description,
+        members: members.split(','),
+        youtubeLink,
+        brochure,
+      });
+
+      await newSerie.save();
+      console.log(sampleImages);
+      CleanUploadsDirectory('uploads');
+      res.status(201).json({ message: 'success' });
+    } else {
+      res.status(300).json({ error: 'Missing or invalid fields' });
+    }
   } catch (err) {
-    console.log(err);
-    res.status(400).json({ error: err.message });
+    console.error(err);
+    res.status(100).json({ error: 'Internal server error' });
   }
 }
 

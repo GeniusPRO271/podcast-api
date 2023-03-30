@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Public Page</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+    />
+    <style>
+      body {
+        margin: 0;
+        background-color: #fff;
+      }
+      .container {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        margin-top: 50px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="columns">
+        <div class="column is-one-fifth">
+          <aside>
+            <figure class="image is-160x160 mb-2">
+              <img
+                src="https://res.cloudinary.com/dpoefum0k/image/upload/v1680084810/podcast-api/LogoESDH2022_se2vuk.png"
+                alt="Logo"
+                class="menu-label"
+              />
+            </figure>
+            <ul class="menu-list">
+              <li><a href="/createSerie">CREATE SERIE</a></li>
+              <li><a href="/createShow">CREATE SHOW</a></li>
+              <li><a href="#">DELETE SHOW</a></li>
+              <li><a href="#">DELETE SERIE</a></li>
+              <li><a href="#">EDIT SERIE</a></li>
+              <li><a href="#">EDIT SHOW</a></li>
+            </ul>
+          </aside>
+        </div>
+        <div class="column">
+          <h1 class="title">Create Show</h1>
+          <form id="create-show-form">
+            <div class="field">
+              <label for="title" class="label">Title</label>
+              <div class="control">
+                <input
+                  type="text"
+                  class="input"
+                  id="title"
+                  name="title"
+                  required
+                />
+              </div>
+            </div>
+            <div class="field">
+              <label for="showDate" class="label">Day of the Show</label>
+              <div class="control">
+                <input
+                  type="date"
+                  class="input"
+                  id="showDate"
+                  name="showDate"
+                  required
+                />
+              </div>
+            </div>
+            <div class="field">
+              <label for="image" class="label">Cover Image</label>
+              <div class="control">
+                <input
+                  type="file"
+                  class="input"
+                  name="image"
+                  id="image"
+                  accept=".jpg,.jpeg,.png"
+                  required
+                />
+              </div>
+            </div>
+            <div class="field">
+              <label for="location" class="label">Location</label>
+              <div class="control">
+                <input
+                  type="text"
+                  class="input"
+                  id="location"
+                  name="location"
+                  required
+                />
+              </div>
+            </div>
+            <div class="field">
+              <label for="ticketlink" class="label">Buy Ticket Link</label>
+              <div class="control">
+                <input
+                  type="text"
+                  class="input"
+                  id="ticketlink"
+                  name="buyticketlink"
+                  required
+                />
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <button type="submit" id="submit-button" class="button is-link">
+                  Create
+                </button>
+              </div>
+            </div>
+            <div id="alert-container"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script>
+      const createShowForm = document.getElementById('create-show-form');
+
+      createShowForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const button = document.getElementById('submit-button');
+        button.classList.add('is-loading');
+        const formData = new FormData(createShowForm);
+        const title = formData.get('title');
+        const showDate = formData.get('showDate');
+        const image = formData.get('image');
+        const location = formData.get('location');
+        const buyticketlink = formData.get('ticketlink');
+
+        for (const [key, value] of formData.entries()) {
+          console.log(`${key}: ${value}`);
+        }
+
+        // fetch('/shows', {
+        //   method: 'POST',
+        //   body: formData,
+        // })
+        //   .then((response) => {
+        //     button.classList.remove('is-loading');
+        //     if (response.status === 201) {
+        //       showAlert('success', 'Show created successfully!');
+        //     } else {
+        //       showAlert('danger', 'An error occurred while creating the show.');
+        //     }
+        //     console.log(response);
+        //   })
+        //   .catch((error) => {
+        //     button.classList.remove('is-loading');
+        //     console.error(error);
+        //     showAlert('danger', 'An error occurred while creating the show.');
+        //   });
+        createShowForm.reset();
+      });
+
+      function showAlert(type, message) {
+        const container = document.getElementById('alert-container');
+        container.innerHTML = message;
+        container.classList.add('notification', `is-${type}`, 'mt-3');
+      }
+    </script>
+  </body>
+</html>

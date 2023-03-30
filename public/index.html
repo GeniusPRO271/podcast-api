@@ -18,8 +18,8 @@
         border-radius: 10px;
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         padding: 20px;
-        width: 90%;
-        max-width: 800px;
+        width: 100%;
+        max-width: 1200px;
         margin: 0 auto;
         margin-top: 50px;
       }
@@ -28,13 +28,20 @@
   <body>
     <div class="container-fluid">
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-2">
           <ul class="nav flex-column">
-            <li class="nav-item">
-              <a class="nav-link active" href="/createShow">CREATE SERIE</a>
+            <li>
+              <img
+                src="https://res.cloudinary.com/dpoefum0k/image/upload/v1680084810/podcast-api/LogoESDH2022_se2vuk.png"
+                alt="Logo"
+                class="img-fluid mb-3"
+              />
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">CREATE SHOW</a>
+              <a class="nav-link active" href="/createSerie">CREATE SERIE</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/createShow">CREATE SHOW</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">DELETE SHOW</a>
@@ -50,10 +57,7 @@
             </li>
           </ul>
         </div>
-        <div class="col-md-9">
-          <h1>Welcome to My App</h1>
-          <p>This is the main content area.</p>
-        </div>
+        <div class="col-md-10"></div>
       </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
