@@ -1,4 +1,8 @@
-const { CleanUploadsDirectory, UploadCloudinary } = require('../cloudinary');
+const {
+  CleanUploadsDirectory,
+  UploadCloudinary,
+  DeleteImage,
+} = require('../cloudinary');
 const { Serie } = require('../models/series_models');
 
 // Get all series
@@ -82,11 +86,33 @@ async function update(req, res) {
 
 // Delete a series by ID
 async function deleteById(req, res) {
-  const serie = await Serie.findByIdAndDelete(req.params.id);
-  if (!serie) {
-    res.status(404).json({ error: 'Series not found' });
-  } else {
-    res.json(serie);
+  try {
+    console.log(req.params.id);
+    const serie = await Serie.findById(req.params.id);
+    if (!serie) {
+      return res.status(404).json({ error: 'Show not found' });
+    }
+
+    // extract the public ID from the Cloudinary URL
+    const publicID = serie.imagesMain.match(/\/v\d+\/(.+)\.[a-z]+$/)[1];
+    // delete the image from Cloudinary
+    await DeleteImage(publicID);
+
+    for (let index = 0; index < serie.images.length; index++) {
+      const otherImagesID = serie.images[index].match(
+        /\/v\d+\/(.+)\.[a-z]+$/
+      )[1];
+      // delete the image from Cloudinary
+      await DeleteImage(otherImagesID);
+    }
+
+    // delete the show from the database
+    await Serie.findByIdAndDelete(req.params.id);
+
+    res.status(200).json(serie);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to delete show' });
   }
 }
 

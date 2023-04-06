@@ -1,9 +1,12 @@
 const { Show } = require('../models/show_models');
-const { UploadCloudinary, CleanUploadsDirectory } = require('../cloudinary');
+const {
+  UploadCloudinary,
+  CleanUploadsDirectory,
+  DeleteImage,
+} = require('../cloudinary');
 
 // Get all shows
 async function getAll(req, res) {
-  console.log('get shows');
   const shows = await Show.find({});
   res.json(shows);
 }
@@ -19,7 +22,7 @@ async function create(req, res) {
       console.log(req.file.path);
       // If a file was uploaded, upload the file to Cloudinary and set the image URL on the new Show object
       const image_url = await UploadCloudinary(req.file.path);
-
+      console.log('Image uploaded');
       const newShow = new Show({
         title,
         showDate,
@@ -65,11 +68,25 @@ async function update(req, res) {
 
 // Delete a show by ID
 async function deleteById(req, res) {
-  const show = await Show.findByIdAndDelete(req.params.id);
-  if (!show) {
-    res.status(404).json({ error: 'Show not found' });
-  } else {
-    res.json(show);
+  try {
+    const show = await Show.findById(req.params.id);
+    if (!show) {
+      return res.status(404).json({ error: 'Show not found' });
+    }
+
+    // extract the public ID from the Cloudinary URL
+    const publicID = show.image.match(/\/v\d+\/(.+)\.[a-z]+$/)[1];
+
+    // delete the image from Cloudinary
+    await DeleteImage(publicID);
+
+    // delete the show from the database
+    await Show.findByIdAndDelete(req.params.id);
+
+    res.status(200).json(show);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to delete show' });
   }
 }
 

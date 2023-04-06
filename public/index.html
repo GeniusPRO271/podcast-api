@@ -6,62 +6,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
     />
-    <style>
-      body {
-        margin: 0;
-        background-color: #fff;
-      }
-      .container-fluid {
-        background-color: #fff;
-        border-radius: 10px;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        padding: 20px;
-        width: 100%;
-        max-width: 1200px;
-        margin: 0 auto;
-        margin-top: 50px;
-      }
-    </style>
   </head>
   <body>
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-2">
-          <ul class="nav flex-column">
-            <li>
+    <div class="box m-6">
+      <div class="columns">
+        <div class="column is-one-fifth">
+          <aside>
+            <figure class="image is-160x160 mb-2">
               <img
                 src="https://res.cloudinary.com/dpoefum0k/image/upload/v1680084810/podcast-api/LogoESDH2022_se2vuk.png"
                 alt="Logo"
-                class="img-fluid mb-3"
+                class="menu-label"
               />
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="/createSerie">CREATE SERIE</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/createShow">CREATE SHOW</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">DELETE SHOW</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">DELETE SERIE</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">EDIT SERIE</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">EDIT SHOW</a>
-            </li>
-          </ul>
+            </figure>
+            <ul class="menu-list">
+              <li><a href="/createSerie">CREATE SERIE</a></li>
+              <li><a href="/createShow">CREATE SHOW</a></li>
+              <li><a href="/deleteShow">DELETE SHOW</a></li>
+              <li><a href="/deleteSerie">DELETE SERIE</a></li>
+              <li><a href="#">EDIT SERIE</a></li>
+              <li><a href="#">EDIT SHOW</a></li>
+            </ul>
+          </aside>
         </div>
-        <div class="col-md-10"></div>
+        <div class="column"></div>
       </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
   </body>
 </html>

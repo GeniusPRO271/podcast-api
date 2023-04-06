@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Public Page</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+    />
+  </head>
+  <body>
+    <div class="box m-6">
+      <div class="columns">
+        <div class="column is-2">
+          <aside>
+            <figure class="image">
+              <img
+                src="https://res.cloudinary.com/dpoefum0k/image/upload/v1680084810/podcast-api/LogoESDH2022_se2vuk.png"
+                alt="Logo"
+                class="menu-label"
+              />
+            </figure>
+            <ul class="menu-list pt-5">
+              <li><a href="/createSerie">CREATE SERIE</a></li>
+              <li><a href="/createShow">CREATE SHOW</a></li>
+              <li><a href="/deleteShow">DELETE SHOW</a></li>
+              <li><a href="/deleteSerie">DELETE SERIE</a></li>
+              <li><a href="#">EDIT SERIE</a></li>
+              <li><a href="#">EDIT SHOW</a></li>
+            </ul>
+          </aside>
+        </div>
+        <div class="column" id="showContainer">
+          <div id="alert-container"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      function formatDate(dateStr) {
+        const date = new Date(dateStr);
+
+        // Get the day of the week
+        const daysOfWeek = [
+          'Sunday',
+          'Monday',
+          'Tuesday',
+          'Wednesday',
+          'Thursday',
+          'Friday',
+          'Saturday',
+        ];
+        const dayOfWeek = daysOfWeek[date.getUTCDay()];
+
+        // Get the day of the month with leading zero
+        const dayOfMonth = ('0' + date.getUTCDate()).slice(-2);
+
+        // Get the month
+        const months = [
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December',
+        ];
+        const month = months[date.getUTCMonth()];
+
+        // Combine the parts into the final string
+        const result = `${dayOfWeek} ${dayOfMonth} ${month}`;
+        return result;
+      }
+
+      function showAlert(type, message) {
+        const container = document.getElementById('alert-container');
+        container.innerHTML = message;
+        container.classList.add('notification', `is-${type}`, 'mt-3');
+      }
+
+      const renderShows = (shows) => {
+        const container = document.getElementById('showContainer');
+
+        shows.forEach((show) => {
+          const div = document.createElement('div');
+          div.classList.add('column', 'box');
+          div.id = show._id;
+
+          const article = document.createElement('div');
+          article.classList.add('columns');
+          article.classList.add('is-align-items-center');
+
+          const imgDiv = document.createElement('div');
+          imgDiv.classList.add('column', 'is-2', 'has-text-centered');
+
+          const figure = document.createElement('figure');
+          figure.classList.add('image', 'is-inline-block-mobile');
+          figure.classList.add('is-size-3');
+
+          const img = document.createElement('img');
+          img.src = show.image;
+          img.alt = show.title;
+          img.style.width = '200px';
+          img.style.borderRadius = '10px';
+
+          const mediaConent = document.createElement('div');
+          mediaConent.classList.add(
+            'pl-5',
+            'has-text-centered-mobile',
+            'column'
+          );
+
+          const textContentDiv = document.createElement('div');
+          textContentDiv.classList.add('content');
+
+          const titleP = document.createElement('p');
+          titleP.textContent = show.title;
+          titleP.classList.add('is-size-5');
+
+          const showDetailsP = document.createElement('p');
+
+          const dateSpan = document.createElement('span');
+          dateSpan.textContent = formatDate(show.showDate);
+          dateSpan.classList.add('is-size-6');
+          showDetailsP.appendChild(dateSpan);
+
+          showDetailsP.appendChild(document.createElement('br'));
+
+          const locationSpan = document.createElement('span');
+          locationSpan.textContent = show.location;
+          locationSpan.classList.add('is-size-6');
+          showDetailsP.appendChild(locationSpan);
+
+          const buttonContainer = document.createElement('div');
+          buttonContainer.classList.add(
+            'pt-3',
+            'pl-5',
+            'has-text-centered',
+            'column'
+          );
+
+          const button = document.createElement('button');
+          button.classList.add('button', 'is-danger');
+          button.textContent = 'Delete';
+          button.id = 'deleteButton';
+
+          button.addEventListener('click', () => {
+            button.classList.add('is-loading');
+            fetch(`/shows/${show._id}`, {
+              method: 'DELETE',
+            })
+              .then((response) => {
+                if (response.status == 404) {
+                  showAlert('danger', 'Failed to delete show');
+                  button.classList.remove('is-loading');
+                }
+                if (response.status == 200) {
+                  showAlert('success', 'Show Deleted successfully!');
+                  const showDiv = document.getElementById(`${show._id}`);
+                  container.removeChild(showDiv);
+                  button.classList.remove('is-loading');
+                }
+              })
+              .catch((error) => {
+                console.error(error);
+                button.classList.remove('is-loading');
+                showAlert(
+                  'danger',
+                  'An error occurred while deleting the show.'
+                );
+              });
+          });
+
+          figure.appendChild(img);
+          imgDiv.appendChild(figure);
+          showDetailsP.appendChild(locationSpan);
+          textContentDiv.appendChild(titleP);
+          textContentDiv.appendChild(showDetailsP);
+          mediaConent.appendChild(textContentDiv);
+          buttonContainer.appendChild(button);
+          article.appendChild(imgDiv);
+          article.appendChild(mediaConent);
+          article.appendChild(buttonContainer);
+          div.appendChild(article);
+          container.appendChild(div);
+        });
+      };
+
+      fetch('/shows')
+        .then((response) => response.json())
+        .then((data) => {
+          renderShows(data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    </script>
+  </body>
+</html>

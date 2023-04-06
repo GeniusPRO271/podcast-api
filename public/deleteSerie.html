@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Public Page</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+    />
+  </head>
+  <body>
+    <div class="box m-6">
+      <div class="columns">
+        <div class="column is-2">
+          <aside>
+            <figure class="image">
+              <img
+                src="https://res.cloudinary.com/dpoefum0k/image/upload/v1680084810/podcast-api/LogoESDH2022_se2vuk.png"
+                alt="Logo"
+                class="menu-label"
+              />
+            </figure>
+            <ul class="menu-list pt-5">
+              <li><a href="/createSerie">CREATE SERIE</a></li>
+              <li><a href="/createShow">CREATE SHOW</a></li>
+              <li><a href="/deleteShow">DELETE SHOW</a></li>
+              <li><a href="/deleteSerie">DELETE SERIE</a></li>
+              <li><a href="#">EDIT SERIE</a></li>
+              <li><a href="#">EDIT SHOW</a></li>
+            </ul>
+          </aside>
+        </div>
+        <div class="column" id="serieContainer">
+          <div id="alert-container"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      function formatDate(dateStr) {
+        const date = new Date(dateStr);
+
+        // Get the day of the week
+        const daysOfWeek = [
+          'Sunday',
+          'Monday',
+          'Tuesday',
+          'Wednesday',
+          'Thursday',
+          'Friday',
+          'Saturday',
+        ];
+        const dayOfWeek = daysOfWeek[date.getUTCDay()];
+
+        // Get the day of the month with leading zero
+        const dayOfMonth = ('0' + date.getUTCDate()).slice(-2);
+
+        // Get the month
+        const months = [
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December',
+        ];
+        const month = months[date.getUTCMonth()];
+
+        // Combine the parts into the final string
+        const result = `${dayOfWeek} ${dayOfMonth} ${month}`;
+        return result;
+      }
+
+      function showAlert(type, message) {
+        const container = document.getElementById('alert-container');
+        container.innerHTML = message;
+        container.classList.add('notification', `is-${type}`, 'mt-3');
+      }
+
+      const renderSeries = (series) => {
+        const container = document.getElementById('serieContainer');
+
+        series.forEach((serie) => {
+          const div = document.createElement('div');
+          div.classList.add('column', 'box');
+          div.id = serie._id;
+
+          const article = document.createElement('div');
+          article.classList.add('columns');
+          article.classList.add('is-align-items-center');
+
+          const imgDiv = document.createElement('div');
+          imgDiv.classList.add('column', 'is-2', 'has-text-centered');
+
+          const figure = document.createElement('figure');
+          figure.classList.add('image', 'is-inline-block-mobile');
+
+          const img = document.createElement('img');
+          img.src = serie.imagesMain;
+          img.alt = serie.title;
+          img.style.width = '200px';
+          img.style.height = '300px';
+          img.style.objectFit = 'cover';
+          img.style.borderRadius = '10px';
+
+          const mediaConent = document.createElement('div');
+          mediaConent.classList.add(
+            'pl-5',
+            'has-text-centered-mobile',
+            'column',
+            'is-6-desktop'
+          );
+
+          const textContentDiv = document.createElement('div');
+          textContentDiv.classList.add('content');
+
+          const titleP = document.createElement('p');
+          titleP.textContent = serie.title;
+          titleP.classList.add('is-size-5');
+
+          const descriptionP = document.createElement('p');
+          descriptionP.textContent = serie.description;
+          descriptionP.classList.add('is-size-5');
+
+          const serieDetailsP = document.createElement('p');
+
+          const dateSpan = document.createElement('span');
+          dateSpan.textContent = `Todos los ${serie.serieDays.join(',')}`;
+          dateSpan.classList.add('is-size-6');
+          serieDetailsP.appendChild(dateSpan);
+
+          serieDetailsP.appendChild(document.createElement('br'));
+
+          const hoursSpan = document.createElement('span');
+          hoursSpan.textContent = `${serie.serieStart} - ${serie.serieEnd}`;
+          hoursSpan.classList.add('is-size-6');
+          serieDetailsP.appendChild(hoursSpan);
+
+          const buttonContainer = document.createElement('div');
+          buttonContainer.classList.add(
+            'pt-3',
+            'pl-5',
+            'has-text-centered',
+            'column'
+          );
+
+          const button = document.createElement('button');
+          button.classList.add('button', 'is-danger');
+          button.textContent = 'Delete';
+          button.id = 'deleteButton';
+
+          button.addEventListener('click', () => {
+            button.classList.add('is-loading');
+            fetch(`/series/${serie._id}`, {
+              method: 'DELETE',
+            })
+              .then((response) => {
+                if (response.status == 404) {
+                  showAlert('danger', 'Failed to delete serie');
+                  button.classList.remove('is-loading');
+                }
+                if (response.status == 200) {
+                  showAlert('success', 'Serie Deleted successfully!');
+                  const serieDiv = document.getElementById(`${serie._id}`);
+                  container.removeChild(serieDiv);
+                  button.classList.remove('is-loading');
+                }
+              })
+              .catch((error) => {
+                console.error(error);
+                button.classList.remove('is-loading');
+                showAlert(
+                  'danger',
+                  'An error occurred while deleting the serie.'
+                );
+              });
+          });
+
+          figure.appendChild(img);
+          imgDiv.appendChild(figure);
+          serieDetailsP.appendChild(hoursSpan);
+          textContentDiv.appendChild(titleP);
+          textContentDiv.appendChild(descriptionP);
+          textContentDiv.appendChild(serieDetailsP);
+          mediaConent.appendChild(textContentDiv);
+          buttonContainer.appendChild(button);
+          article.appendChild(imgDiv);
+          article.appendChild(mediaConent);
+          article.appendChild(buttonContainer);
+          div.appendChild(article);
+          container.appendChild(div);
+        });
+      };
+
+      fetch('/series')
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          renderSeries(data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    </script>
+  </body>
+</html>

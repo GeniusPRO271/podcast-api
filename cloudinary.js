@@ -27,6 +27,18 @@ async function UploadCloudinary(img) {
       console.log(err);
     });
 }
+async function DeleteImage(publicId) {
+  try {
+    // Delete the image from Cloudinary
+    const result = await cloudinary.uploader.destroy(publicId);
+
+    // Return the result object
+    return result;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to delete image from Cloudinary');
+  }
+}
 async function CleanUploadsDirectory(directory) {
   const files = await fs.promises.readdir(directory);
 
@@ -36,4 +48,4 @@ async function CleanUploadsDirectory(directory) {
 
   console.log(`Cleaned ${files.length} files from ${directory}`);
 }
-module.exports = { UploadCloudinary, CleanUploadsDirectory };
+module.exports = { UploadCloudinary, CleanUploadsDirectory, DeleteImage };
