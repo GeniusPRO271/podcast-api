@@ -18,8 +18,10 @@ serieRouter.post(
 serieRouter.get('/:id', seriesController.getById);
 serieRouter.put(
   '/:id',
-  upload.single('imagesMain'),
-  upload.array('sampleImages'),
+  upload.fields([
+    { name: 'imagesMain', maxCount: 1 }, // For single file
+    { name: 'images[]', maxCount: 10 }, // For array of files
+  ]),
   requiresAuth(),
   seriesController.update
 );

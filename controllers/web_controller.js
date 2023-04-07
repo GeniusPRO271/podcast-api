@@ -16,10 +16,10 @@ async function deleteSerie(req, res) {
   res.sendFile(path.join(__dirname, '../public', 'deleteSerie.html'));
 }
 async function editShow(req, res) {
-  res.sendFile(path.join(__dirname, '../public', 'test.html'));
+  res.sendFile(path.join(__dirname, '../public', 'editShow.html'));
 }
 async function editSerie(req, res) {
-  res.sendFile(path.join(__dirname, '../public', 'test.html'));
+  res.sendFile(path.join(__dirname, '../public', 'editSerie.html'));
 }
 
 module.exports = {

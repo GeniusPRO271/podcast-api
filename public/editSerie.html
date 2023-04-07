@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Public Page</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+    />
+    <script
+      src="https://kit.fontawesome.com/8430ac8e0c.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="box m-6">
+      <div class="columns">
+        <div class="column is-2">
+          <aside>
+            <figure class="image">
+              <img
+                src="https://res.cloudinary.com/dpoefum0k/image/upload/v1680084810/podcast-api/LogoESDH2022_se2vuk.png"
+                alt="Logo"
+                class="menu-label"
+              />
+            </figure>
+            <ul class="menu-list pt-5">
+              <li><a href="/createSerie">CREATE SERIE</a></li>
+              <li><a href="/createShow">CREATE SHOW</a></li>
+              <li><a href="/deleteShow">DELETE SHOW</a></li>
+              <li><a href="/deleteSerie">DELETE SERIE</a></li>
+              <li><a href="/editShow">EDIT SHOW</a></li>
+              <li><a href="/editSerie">EDIT SERIE</a></li>
+            </ul>
+          </aside>
+        </div>
+        <div class="column" id="serieContainer">
+          <div id="alert-container"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      function formatDate(dateStr) {
+        const date = new Date(dateStr);
+
+        // Get the day of the week
+        const daysOfWeek = [
+          'Sunday',
+          'Monday',
+          'Tuesday',
+          'Wednesday',
+          'Thursday',
+          'Friday',
+          'Saturday',
+        ];
+        const dayOfWeek = daysOfWeek[date.getUTCDay()];
+
+        // Get the day of the month with leading zero
+        const dayOfMonth = ('0' + date.getUTCDate()).slice(-2);
+
+        // Get the month
+        const months = [
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December',
+        ];
+        const month = months[date.getUTCMonth()];
+
+        // Combine the parts into the final string
+        const result = `${dayOfWeek} ${dayOfMonth} ${month}`;
+        return result;
+      }
+
+      function showAlert(type, message) {
+        const container = document.getElementById('alert-container');
+        container.innerHTML = message;
+        container.classList.add('notification', `is-${type}`, 'mt-3');
+      }
+
+      const renderSeries = (series) => {
+        const container = document.getElementById('serieContainer');
+
+        series.forEach((serie) => {
+          const div = document.createElement('div');
+          div.classList.add('column', 'box');
+          div.id = serie._id;
+
+          const article = document.createElement('div');
+          article.classList.add('columns');
+          article.classList.add('is-align-items-center');
+
+          const imgDiv = document.createElement('div');
+          imgDiv.classList.add('column', 'is-2', 'has-text-centered');
+
+          const figure = document.createElement('figure');
+          figure.classList.add('image', 'is-inline-block-mobile');
+
+          const img = document.createElement('img');
+          img.src = serie.imagesMain;
+          img.alt = serie.title;
+          img.id = `imgId-${serie._id}`;
+          img.style.width = '200px';
+          img.style.height = '300px';
+          img.style.objectFit = 'cover';
+          img.style.borderRadius = '10px';
+
+          const mediaConent = document.createElement('div');
+          mediaConent.classList.add(
+            'pl-5',
+            'has-text-centered-mobile',
+            'column',
+            'is-6-desktop'
+          );
+
+          const textContentDiv = document.createElement('div');
+          textContentDiv.classList.add('content');
+
+          const titleP = document.createElement('p');
+          titleP.textContent = serie.title;
+          titleP.id = `titleId-${serie._id}`;
+          titleP.classList.add('is-size-5');
+
+          const descriptionP = document.createElement('p');
+          descriptionP.textContent = serie.description;
+          descriptionP.id = `desdescriptionSpanId-${serie._id}`;
+          descriptionP.classList.add('is-size-5');
+
+          const serieDetailsP = document.createElement('p');
+
+          const dateSpan = document.createElement('span');
+          dateSpan.textContent = `Todos los ${serie.serieDays.join(',')}`;
+          dateSpan.classList.add('is-size-6');
+          dateSpan.id = `dateSpanId-${serie._id}`;
+          serieDetailsP.appendChild(dateSpan);
+
+          serieDetailsP.appendChild(document.createElement('br'));
+
+          const hoursSpan = document.createElement('span');
+          hoursSpan.id = `hourSpanId-${serie._id}`;
+          hoursSpan.textContent = `${serie.serieStart} - ${serie.serieEnd}`;
+          hoursSpan.classList.add('is-size-6');
+          serieDetailsP.appendChild(hoursSpan);
+
+          const buttonContainer = document.createElement('div');
+          buttonContainer.classList.add(
+            'pt-3',
+            'pl-5',
+            'has-text-centered',
+            'column'
+          );
+
+          const button = document.createElement('button');
+          button.classList.add('button', 'is-link');
+          button.textContent = 'Edit';
+          button.id = `buttonId-${serie._id}`;
+
+          button.addEventListener('click', () => {
+            createEditForm(serie);
+            button.style.display = 'none';
+          });
+
+          figure.appendChild(img);
+          imgDiv.appendChild(figure);
+          serieDetailsP.appendChild(hoursSpan);
+          textContentDiv.appendChild(titleP);
+          textContentDiv.appendChild(descriptionP);
+          textContentDiv.appendChild(serieDetailsP);
+          mediaConent.appendChild(textContentDiv);
+          buttonContainer.appendChild(button);
+          article.appendChild(imgDiv);
+          article.appendChild(mediaConent);
+          article.appendChild(buttonContainer);
+          div.appendChild(article);
+          container.appendChild(div);
+        });
+      };
+
+      const createEditForm = (serie) => {
+        const container = document.getElementById(serie._id);
+
+        const article = document.createElement('div');
+        article.classList.add('columns');
+        article.classList.add('is-align-items-center');
+
+        const file = document.createElement('div');
+        file.classList.add(
+          'column',
+          'is-2',
+          'has-text-centered',
+          'file',
+          'is-boxed'
+        );
+        const fileLabel = document.createElement('label');
+        fileLabel.classList.add('file-label');
+
+        const fileInput = document.createElement('input');
+        fileInput.classList.add('file-input');
+        fileInput.type = 'file';
+        fileInput.name = 'resume';
+
+        fileInput.addEventListener('change', function (event) {
+          const file = event.target.files[0];
+          const reader = new FileReader();
+
+          reader.onload = function (event) {
+            const imageUrl = event.target.result;
+            const img = document.getElementById(`imgId-${serie._id}`);
+            img.src = imageUrl;
+          };
+
+          reader.readAsDataURL(file);
+        });
+
+        const fileSpan = document.createElement('span');
+        fileSpan.classList.add('file-cta');
+
+        const iconSpan = document.createElement('span');
+        iconSpan.classList.add('file-icon');
+
+        const icon = document.createElement('i');
+        icon.classList.add('fas', 'fa-upload');
+
+        const nameLabel = document.createElement('span');
+        nameLabel.classList.add('file-label');
+        nameLabel.classList.add('is-size-7');
+        nameLabel.textContent = 'Drop new Cover ';
+
+        const file2Label = document.createElement('label');
+        file2Label.classList.add('file-label');
+
+        const file2Input = document.createElement('input');
+        file2Input.classList.add('file-input');
+        file2Input.type = 'file';
+        file2Input.multiple = 'true';
+        file2Input.name = 'resume';
+
+        const file2Span = document.createElement('span');
+        file2Span.classList.add('file-cta');
+
+        const icon2Span = document.createElement('span');
+        icon2Span.classList.add('file-icon');
+
+        const icon2 = document.createElement('i');
+        icon2.classList.add('fas', 'fa-upload');
+
+        const name2Label = document.createElement('span');
+        name2Label.classList.add('file-label');
+        name2Label.classList.add('is-size-7');
+        name2Label.textContent = 'Images(will delete old) ';
+
+        const form = document.createElement('div');
+        form.classList.add('pl-5', 'has-text-centered-mobile', 'column');
+
+        const titleForm = document.createElement('div');
+        titleForm.classList.add('field');
+
+        const titleControl = document.createElement('div');
+        titleControl.classList.add('control');
+
+        const titleInput = document.createElement('input');
+        titleInput.classList.add('input');
+        titleInput.type = 'text';
+        titleInput.placeholder = serie.title;
+
+        titleInput.addEventListener('input', function (event) {
+          const titleInputValue = event.target.value;
+          const titleFieldToChange = document.getElementById(
+            `titleId-${serie._id}`
+          );
+          titleFieldToChange.textContent = titleInputValue;
+        });
+
+        const descriptionForm = document.createElement('div');
+        descriptionForm.classList.add('field');
+
+        const descriptionControl = document.createElement('div');
+        descriptionControl.classList.add('control');
+
+        const descriptionInput = document.createElement('textarea');
+        descriptionInput.classList.add('textarea');
+        descriptionInput.type = 'text';
+        descriptionInput.placeholder = serie.description;
+
+        descriptionInput.addEventListener('input', function (event) {
+          const descriptionInputValue = event.target.value;
+          const descriptionFieldToChange = document.getElementById(
+            `desdescriptionSpanId-${serie._id}`
+          );
+          descriptionFieldToChange.textContent = descriptionInputValue;
+        });
+
+        const daysSelect = document.createElement('div');
+        daysSelect.classList.add('select', 'is-multiple');
+
+        const select = document.createElement('select');
+        select.setAttribute('id', 'serieDays');
+        select.setAttribute('name', 'serieDays[]');
+        select.setAttribute('multiple', true);
+
+        select.addEventListener('change', function () {
+          const dayShowId = document.getElementById(`dateSpanId-${serie._id}`);
+          dayShowId.textContent = `Todos los ${Array.from(
+            select.selectedOptions,
+            (option) => option.value
+          ).join(', ')}`;
+        });
+        const days = [
+          'Monday',
+          'Tuesday',
+          'Wednesday',
+          'Thursday',
+          'Friday',
+          'Saturday',
+          'Sunday',
+        ];
+
+        for (let i = 0; i < days.length; i++) {
+          const option = document.createElement('option');
+          option.setAttribute('value', days[i].toLowerCase());
+          option.textContent = days[i];
+          select.appendChild(option);
+        }
+
+        daysSelect.appendChild(select);
+
+        const dayField = document.createElement('div');
+        dayField.classList.add('field');
+
+        const hourField = document.createElement('div');
+        hourField.classList.add('field');
+
+        const hourcontrol = document.createElement('div');
+        hourcontrol.classList.add('control');
+
+        const hourinputStart = document.createElement('input');
+        hourinputStart.classList.add('input');
+        hourinputStart.setAttribute('type', 'time');
+        hourinputStart.setAttribute('id', 'serieStart');
+        hourinputStart.setAttribute('name', 'serieStart');
+        hourinputStart.setAttribute('value', `${serie.serieStart}`);
+        hourinputStart.addEventListener('change', () => {
+          const element = document.getElementById(`hourSpanId-${serie._id}`);
+          if (element) {
+            element.textContent = `${hourinputStart.value} - ${hourinputEnd.value}`;
+          }
+        });
+        hourcontrol.appendChild(hourinputStart);
+
+        const hourinputEnd = document.createElement('input');
+        hourinputEnd.classList.add('input');
+        hourinputEnd.setAttribute('type', 'time');
+        hourinputEnd.setAttribute('id', 'serieEnd');
+        hourinputEnd.setAttribute('name', 'serieEnd');
+        hourinputEnd.setAttribute('value', `${serie.serieEnd}`);
+        hourinputEnd.addEventListener('change', () => {
+          const element = document.getElementById(`hourSpanId-${serie._id}`);
+          if (element) {
+            element.textContent = `${hourinputStart.value} - ${hourinputEnd.value}`;
+          }
+        });
+        hourcontrol.appendChild(hourinputEnd);
+
+        hourField.appendChild(hourcontrol);
+
+        const members = [
+          'Luis Slimming',
+          'Marcelo Valverde',
+          'Hector Romero',
+          'Pao Molina',
+        ];
+
+        const membersDiv = document.createElement('div');
+        membersDiv.classList.add('mb-3');
+
+        for (let i = 0; i < members.length; i++) {
+          const memberDiv = document.createElement('div');
+          const memberInput = document.createElement('input');
+          memberInput.setAttribute('type', 'checkbox');
+          memberInput.setAttribute('id', 'member' + (i + 1));
+          memberInput.setAttribute('name', 'members[]');
+          memberInput.setAttribute('value', members[i]);
+
+          if (serie.members && serie.members.includes(members[i])) {
+            memberInput.checked = true;
+          }
+
+          const memberLabel = document.createElement('label');
+          memberLabel.setAttribute('for', 'member' + (i + 1));
+          memberLabel.textContent = members[i];
+
+          memberDiv.appendChild(memberInput);
+          memberDiv.appendChild(memberLabel);
+          membersDiv.appendChild(memberDiv);
+        }
+
+        const youtubeField = document.createElement('div');
+        youtubeField.classList.add('field');
+
+        const youtubeControl = document.createElement('div');
+        youtubeControl.classList.add('control');
+
+        const youtubeInput = document.createElement('input');
+        youtubeInput.classList.add('input');
+        youtubeInput.placeholder = serie.youtubeLink;
+        youtubeInput.setAttribute('type', 'text');
+        youtubeInput.setAttribute('id', 'youtubeLink');
+        youtubeInput.setAttribute('name', 'youtubeLink');
+
+        youtubeControl.appendChild(youtubeInput);
+
+        youtubeField.appendChild(youtubeControl);
+
+        const brochureField = document.createElement('div');
+        brochureField.classList.add('field');
+
+        const brochureControl = document.createElement('div');
+        brochureControl.classList.add('control');
+
+        const brochureInput = document.createElement('input');
+        brochureInput.classList.add('input');
+        brochureInput.placeholder = serie.brochure;
+        brochureInput.setAttribute('type', 'text');
+        brochureInput.setAttribute('id', 'brochure');
+        brochureInput.setAttribute('name', 'brochure');
+
+        brochureControl.appendChild(brochureInput);
+        brochureField.appendChild(brochureControl);
+
+        const updateContainer = document.createElement('div');
+        updateContainer.classList.add(
+          'pt-3',
+          'pl-5',
+          'has-text-centered',
+          'column'
+        );
+
+        const update = document.createElement('button');
+        update.classList.add('button', 'is-warning');
+        update.textContent = 'Update';
+        update.id = 'updateButton';
+
+        update.addEventListener('click', () => {
+          update.classList.add('is-loading');
+          cancel.disabled = 'true';
+          const formData = new FormData();
+
+          const title = titleInput.value;
+          console.log(title);
+          if (title != '') {
+            formData.append('title', title);
+          }
+
+          const description = descriptionInput.value;
+          if (description != '') {
+            formData.append('description', description);
+          }
+
+          const days = Array.from(
+            select.selectedOptions,
+            (option) => option.value
+          );
+          if (days.length > 0) {
+            formData.append('serieDays', days);
+          }
+
+          const start = hourinputStart.value;
+          if (start != '') {
+            formData.append('serieStart', start);
+          }
+          const end = hourinputEnd.value;
+          if (end != '') {
+            formData.append('serieEnd', end);
+          }
+          if (fileInput.files.length > 0) {
+            formData.append('imagesMain', fileInput.files[0]);
+          }
+          if (file2Input.files.length > 0) {
+            for (let i = 0; i < file2Input.files.length; i++) {
+              formData.append('images[]', file2Input.files[i]);
+            }
+          }
+
+          const memebers = [];
+          const memberCheckboxes = document.querySelectorAll(
+            'input[name="members[]"]:checked'
+          );
+          memberCheckboxes.forEach((checkbox) => {
+            memebers.push(checkbox.value);
+          });
+          if (youtubeInput.value != '') {
+            formData.append('youtubeLink', youtubeInput.value);
+          }
+          const brochure = brochureInput.value;
+          if (brochure != '') {
+            formData.append('brochure', brochure);
+          }
+
+          // Remove empty fields
+          for (const [key, value] of formData.entries()) {
+            if (!value) {
+              formData.delete(key);
+            }
+          }
+          for (const [name, value] of formData.entries()) {
+            console.log(`${name}: ${value}`);
+          }
+
+          fetch(`/series/${serie._id}`, {
+            method: 'PUT',
+            body: formData,
+          })
+            .then((response) => {
+              update.classList.remove('is-loading');
+              cancel.disabled = 'false';
+              console.log(response.status);
+              if (response.status == 200) {
+                showAlert('success', 'Serie Updated successfully!');
+                // Remove the current serie element
+                article.remove();
+
+                // Show the "Edit" button again
+                const button = document.getElementById(`buttonId-${serie._id}`);
+                button.style.display = '';
+              } else {
+                showAlert('danger', 'Failed to edit serie ');
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+              showAlert('danger', 'Failed to edit serie ');
+            });
+        });
+
+        const cancel = document.createElement('button');
+        cancel.classList.add('button', 'is-danger', 'ml-1');
+        cancel.textContent = 'Cancel';
+        cancel.id = 'updateButton';
+
+        cancel.addEventListener('click', () => {
+          article.remove();
+          const button = document.getElementById(`buttonId-${serie._id}`);
+          button.style.display = '';
+          const img = document.getElementById(`imgId-${serie._id}`);
+          const titleFieldToChange = document.getElementById(
+            `titleId-${serie._id}`
+          );
+          const descriptionFieldToChange = document.getElementById(
+            `desdescriptionSpanId-${serie._id}`
+          );
+          const dateSpanFieldToChange = document.getElementById(
+            `dateSpanId-${serie._id}`
+          );
+
+          hoursSpanFiledToChange = document.getElementById(
+            `hourSpanId-${serie._id}`
+          );
+
+          img.src = serie.imagesMain;
+
+          titleFieldToChange.textContent = serie.title;
+          descriptionFieldToChange.textContent = serie.description;
+          dateSpanFieldToChange.textContent = `Todos los ${serie.serieDays.join(
+            ','
+          )}`;
+          hoursSpanFiledToChange.textContent = `${serie.serieStart} - ${serie.serieEnd}`;
+        });
+
+        iconSpan.appendChild(icon);
+        fileSpan.appendChild(iconSpan);
+        fileSpan.appendChild(nameLabel);
+        fileLabel.appendChild(fileInput);
+        fileLabel.appendChild(fileSpan);
+        file.appendChild(fileLabel);
+
+        icon2Span.appendChild(icon2);
+        file2Span.appendChild(icon2Span);
+        file2Span.appendChild(name2Label);
+        file2Label.appendChild(file2Input);
+        file2Label.appendChild(file2Span);
+        file.appendChild(file2Label);
+
+        titleControl.appendChild(titleInput);
+        titleForm.appendChild(titleControl);
+        form.appendChild(titleForm);
+
+        descriptionControl.appendChild(descriptionInput);
+        descriptionForm.appendChild(descriptionControl);
+        form.appendChild(descriptionForm);
+
+        dayField.appendChild(daysSelect);
+        form.appendChild(dayField);
+
+        form.appendChild(hourField);
+        form.appendChild(membersDiv);
+        form.appendChild(youtubeField);
+        form.appendChild(brochureField);
+
+        updateContainer.appendChild(update);
+        updateContainer.appendChild(cancel);
+
+        article.appendChild(file);
+        article.appendChild(form);
+        article.appendChild(updateContainer);
+
+        container.appendChild(article);
+      };
+
+      fetch('/series')
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          renderSeries(data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Public Page</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+    />
+    <script
+      src="https://kit.fontawesome.com/8430ac8e0c.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="box m-6">
+      <div class="columns">
+        <div class="column is-2">
+          <aside>
+            <figure class="image">
+              <img
+                src="https://res.cloudinary.com/dpoefum0k/image/upload/v1680084810/podcast-api/LogoESDH2022_se2vuk.png"
+                alt="Logo"
+                class="menu-label"
+              />
+            </figure>
+            <ul class="menu-list pt-5">
+              <li><a href="/createSerie">CREATE SERIE</a></li>
+              <li><a href="/createShow">CREATE SHOW</a></li>
+              <li><a href="/deleteShow">DELETE SHOW</a></li>
+              <li><a href="/deleteSerie">DELETE SERIE</a></li>
+              <li><a href="/editShow">EDIT SHOW</a></li>
+              <li><a href="/editSerie">EDIT SERIE</a></li>
+            </ul>
+          </aside>
+        </div>
+        <div class="column" id="showContainer">
+          <div id="alert-container"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      function formatDate(dateStr) {
+        const date = new Date(dateStr);
+
+        // Get the day of the week
+        const daysOfWeek = [
+          'Sunday',
+          'Monday',
+          'Tuesday',
+          'Wednesday',
+          'Thursday',
+          'Friday',
+          'Saturday',
+        ];
+        const dayOfWeek = daysOfWeek[date.getUTCDay()];
+
+        // Get the day of the month with leading zero
+        const dayOfMonth = ('0' + date.getUTCDate()).slice(-2);
+
+        // Get the month
+        const months = [
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December',
+        ];
+        const month = months[date.getUTCMonth()];
+
+        // Combine the parts into the final string
+        const result = `${dayOfWeek} ${dayOfMonth} ${month}`;
+        return result;
+      }
+
+      function showAlert(type, message) {
+        const container = document.getElementById('alert-container');
+        container.innerHTML = message;
+        container.classList.add('notification', `is-${type}`, 'mt-3');
+      }
+
+      const renderShows = (shows) => {
+        const container = document.getElementById('showContainer');
+
+        shows.forEach((show) => {
+          const div = document.createElement('div');
+          div.classList.add('column', 'box');
+          div.id = show._id;
+
+          const article = document.createElement('div');
+          article.classList.add('columns');
+          article.classList.add('is-align-items-center');
+
+          const imgDiv = document.createElement('div');
+          imgDiv.classList.add('column', 'is-2', 'has-text-centered');
+
+          const figure = document.createElement('figure');
+          figure.classList.add('image', 'is-inline-block-mobile');
+          figure.classList.add('is-size-3');
+
+          const img = document.createElement('img');
+          img.src = show.image;
+          img.alt = show.title;
+          img.id = `imgId-${show._id}`;
+          img.style.width = '200px';
+          img.style.borderRadius = '10px';
+
+          const mediaConent = document.createElement('div');
+          mediaConent.classList.add(
+            'pl-5',
+            'has-text-centered-mobile',
+            'column'
+          );
+
+          const textContentDiv = document.createElement('div');
+          textContentDiv.classList.add('content');
+
+          const titleP = document.createElement('p');
+          titleP.id = `titleId-${show._id}`;
+          titleP.textContent = show.title;
+          titleP.classList.add('is-size-5');
+
+          const showDetailsP = document.createElement('p');
+
+          const dateSpan = document.createElement('span');
+          dateSpan.textContent = formatDate(show.showDate);
+          dateSpan.id = `dateSpanId-${show._id}`;
+          dateSpan.classList.add('is-size-6');
+          showDetailsP.appendChild(dateSpan);
+
+          showDetailsP.appendChild(document.createElement('br'));
+
+          const locationSpan = document.createElement('span');
+          locationSpan.textContent = show.location;
+          locationSpan.id = `locationSpanId-${show._id}`;
+          locationSpan.classList.add('is-size-6');
+          showDetailsP.appendChild(locationSpan);
+
+          const buttonContainer = document.createElement('div');
+          buttonContainer.classList.add(
+            'pt-3',
+            'pl-5',
+            'has-text-centered',
+            'column'
+          );
+
+          const button = document.createElement('button');
+          button.classList.add('button', 'is-link');
+          button.textContent = 'Edit';
+          button.id = `buttonId-${show._id}`;
+
+          button.addEventListener('click', () => {
+            createEditForm(show);
+            button.style.display = 'none';
+            // Open a modal or form with input fields for the user to enter the updated information
+            // Update the show information in the database with the new information entered by the user
+            // Update the show element in the DOM with the new information entered by the user
+          });
+
+          figure.appendChild(img);
+          imgDiv.appendChild(figure);
+          showDetailsP.appendChild(locationSpan);
+          textContentDiv.appendChild(titleP);
+          textContentDiv.appendChild(showDetailsP);
+          mediaConent.appendChild(textContentDiv);
+          buttonContainer.appendChild(button);
+          article.appendChild(imgDiv);
+          article.appendChild(mediaConent);
+          article.appendChild(buttonContainer);
+          div.appendChild(article);
+          container.appendChild(div);
+        });
+      };
+
+      const createEditForm = (show) => {
+        const container = document.getElementById(show._id);
+
+        const article = document.createElement('div');
+        article.classList.add('columns');
+        article.classList.add('is-align-items-center');
+
+        const file = document.createElement('div');
+        file.classList.add(
+          'column',
+          'is-2',
+          'has-text-centered',
+          'file',
+          'is-boxed'
+        );
+        const fileLabel = document.createElement('label');
+        fileLabel.classList.add('file-label');
+
+        const fileInput = document.createElement('input');
+        fileInput.classList.add('file-input');
+        fileInput.type = 'file';
+        fileInput.name = 'resume';
+
+        fileInput.addEventListener('change', function (event) {
+          const file = event.target.files[0];
+          const reader = new FileReader();
+
+          reader.onload = function (event) {
+            const imageUrl = event.target.result;
+            const img = document.getElementById(`imgId-${show._id}`);
+            img.src = imageUrl;
+          };
+
+          reader.readAsDataURL(file);
+        });
+
+        const fileSpan = document.createElement('span');
+        fileSpan.classList.add('file-cta');
+
+        const iconSpan = document.createElement('span');
+        iconSpan.classList.add('file-icon');
+
+        const icon = document.createElement('i');
+        icon.classList.add('fas', 'fa-upload');
+
+        const nameLabel = document.createElement('span');
+        nameLabel.classList.add('file-label');
+        nameLabel.classList.add('is-size-7');
+        nameLabel.textContent = 'Drop new image';
+
+        const form = document.createElement('div');
+        form.classList.add('pl-5', 'has-text-centered-mobile', 'column');
+
+        const titleForm = document.createElement('div');
+        titleForm.classList.add('field');
+
+        const titleControl = document.createElement('div');
+        titleControl.classList.add('control');
+
+        const titleInput = document.createElement('input');
+        titleInput.classList.add('input');
+        titleInput.type = 'text';
+        titleInput.placeholder = show.title;
+
+        titleInput.addEventListener('input', function (event) {
+          const titleInputValue = event.target.value;
+          const titleFieldToChange = document.getElementById(
+            `titleId-${show._id}`
+          );
+          titleFieldToChange.textContent = titleInputValue;
+        });
+
+        const dateForm = document.createElement('div');
+        dateForm.classList.add('field');
+
+        const dateControl = document.createElement('div');
+        dateControl.classList.add('control');
+
+        const dateInput = document.createElement('input');
+        dateInput.classList.add('input');
+        dateInput.type = 'date';
+        dateInput.placeholder = show.date;
+
+        dateInput.addEventListener('change', function (event) {
+          const dateInputValue = event.target.value;
+          const dateFieldToChange = document.getElementById(
+            `dateSpanId-${show._id}`
+          );
+          dateFieldToChange.textContent = formatDate(dateInputValue);
+        });
+
+        const locationForm = document.createElement('div');
+        locationForm.classList.add('field');
+
+        const locationControl = document.createElement('div');
+        locationControl.classList.add('control');
+
+        const locationInput = document.createElement('input');
+        locationInput.classList.add('input');
+        locationInput.type = 'text';
+        locationInput.placeholder = show.location;
+
+        locationInput.addEventListener('input', function (event) {
+          const locationInputValue = event.target.value;
+          const locationFieldToChange = document.getElementById(
+            `locationSpanId-${show._id}`
+          );
+          locationFieldToChange.textContent = locationInputValue;
+        });
+
+        const updateContainer = document.createElement('div');
+        updateContainer.classList.add(
+          'pt-3',
+          'pl-5',
+          'has-text-centered',
+          'column'
+        );
+
+        const update = document.createElement('button');
+        update.classList.add('button', 'is-warning');
+        update.textContent = 'Update';
+        update.id = 'updateButton';
+
+        update.addEventListener('click', () => {
+          update.classList.add('is-loading');
+          cancel.disabled = 'true';
+          const formData = new FormData();
+          // Check if image changed
+          if (fileInput.files.length > 0) {
+            formData.append('image', fileInput.files[0]);
+          }
+          // Check if title is different
+          if (titleInput.value !== show.title && titleInput.value !== '') {
+            formData.append('title', titleInput.value);
+          }
+
+          // Check if date is different
+          if (dateInput.value !== show.date && dateInput.value !== '') {
+            formData.append('showDate', dateInput.value);
+          }
+          // Check if location is different
+          if (
+            locationInput.value !== show.location &&
+            locationInput.value !== ''
+          ) {
+            formData.append('location', locationInput.value);
+          }
+
+          fetch(`/shows/${show._id}`, {
+            method: 'PUT',
+            body: formData,
+          })
+            .then((response) => {
+              update.classList.remove('is-loading');
+              cancel.disabled = 'false';
+              if (response.status == 200) {
+                showAlert('success', 'Show Updated successfully!');
+                // Remove the current show element
+                article.remove();
+
+                // Show the "Edit" button again
+                const button = document.getElementById(`buttonId-${show._id}`);
+                button.style.display = '';
+              } else {
+                showAlert('danger', 'Failed to edit show');
+              }
+            })
+            .catch((error) => {
+              showAlert('danger', 'Failed to edit show');
+            });
+        });
+
+        const cancel = document.createElement('button');
+        cancel.classList.add('button', 'is-danger', 'ml-1');
+        cancel.textContent = 'Cancel';
+        cancel.id = 'updateButton';
+
+        cancel.addEventListener('click', () => {
+          article.remove();
+          const button = document.getElementById(`buttonId-${show._id}`);
+          button.style.display = '';
+          const img = document.getElementById(`imgId-${show._id}`);
+          const titleFieldToChange = document.getElementById(
+            `titleId-${show._id}`
+          );
+          const dateFieldToChange = document.getElementById(
+            `dateSpanId-${show._id}`
+          );
+          const locationFieldToChange = document.getElementById(
+            `locationSpanId-${show._id}`
+          );
+          img.src = show.image;
+          titleFieldToChange.textContent = show.title;
+          dateFieldToChange.textContent = formatDate(show.showDate);
+          locationFieldToChange.textContent = show.location;
+          // Open a modal or form with input fields for the user to enter the updated information
+          // Update the show information in the database with the new information entered by the user
+          // Update the show element in the DOM with the new information entered by the user
+        });
+
+        iconSpan.appendChild(icon);
+        fileSpan.appendChild(iconSpan);
+        fileSpan.appendChild(nameLabel);
+        fileLabel.appendChild(fileInput);
+        fileLabel.appendChild(fileSpan);
+        file.appendChild(fileLabel);
+
+        titleControl.appendChild(titleInput);
+        titleForm.appendChild(titleControl);
+        form.appendChild(titleForm);
+
+        dateControl.appendChild(dateInput);
+        dateForm.appendChild(dateControl);
+        form.appendChild(dateForm);
+
+        locationControl.appendChild(locationInput);
+        locationForm.appendChild(locationControl);
+        form.appendChild(locationForm);
+
+        updateContainer.appendChild(update);
+        updateContainer.appendChild(cancel);
+
+        article.appendChild(file);
+        article.appendChild(form);
+        article.appendChild(updateContainer);
+
+        container.appendChild(article);
+      };
+
+      fetch('/shows')
+        .then((response) => response.json())
+        .then((data) => {
+          renderShows(data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    </script>
+  </body>
+</html>

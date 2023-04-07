@@ -74,13 +74,48 @@ async function getById(req, res) {
 
 // Update a series by ID
 async function update(req, res) {
-  const serie = await Serie.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-  });
-  if (!serie) {
-    res.status(404).json({ error: 'Series not found' });
-  } else {
-    res.json(serie);
+  console.log('UPDATEING');
+  const { id } = req.params;
+  const { ...updateData } = req.body;
+
+  try {
+    let serie = await Serie.findById(id);
+    serie = await Serie.findByIdAndUpdate(id, updateData, { new: true });
+    if (req.files) {
+      // update mainCover
+      if (req.files['imagesMain'] && req.files['imagesMain'].length > 0) {
+        const imagesMainId = serie.imagesMain.match(/\/v\d+\/(.+)\.[a-z]+$/)[1];
+        await DeleteImage(imagesMainId);
+        console.log('uploading ', req.files['imagesMain'][0].path);
+        serie.imagesMain = await UploadCloudinary(
+          req.files['imagesMain'][0].path
+        );
+        await serie.save();
+      }
+      if (req.files['images[]'] && req.files['images[]'].length > 0) {
+        const newSample = [];
+        for (let index = 0; index < serie.images.length; index++) {
+          const oldImagesId = serie.images[index].match(
+            /\/v\d+\/(.+)\.[a-z]+$/
+          )[1];
+          await DeleteImage(oldImagesId);
+          console.log('deleting ', oldImagesId);
+        }
+        for (let index = 0; index < req.files['images[]'].length; index++) {
+          url = await UploadCloudinary(req.files['imagesMain'][0].path);
+          newSample.push(url);
+          console.log('uploading ', url);
+        }
+        serie.images = newSample;
+        await serie.save();
+      }
+    }
+
+    CleanUploadsDirectory('uploads');
+    res.status(200).json(updateData);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
   }
 }
 
