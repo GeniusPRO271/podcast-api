@@ -7,7 +7,7 @@ const {
 
 // Get all shows
 async function getAll(req, res) {
-  const shows = await Show.find({});
+  const shows = await Show.find({}).sort({ showDate: 1 }); // Sort by showDate in ascending order
   res.json(shows);
 }
 
