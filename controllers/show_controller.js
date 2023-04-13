@@ -4,6 +4,7 @@ const {
   CleanUploadsDirectory,
   DeleteImage,
 } = require('../cloudinary');
+const getDominantColor = require('../dominantcolor');
 
 // Get all shows
 async function getAll(req, res) {
@@ -22,11 +23,14 @@ async function create(req, res) {
       console.log(req.file.path);
       // If a file was uploaded, upload the file to Cloudinary and set the image URL on the new Show object
       const image_url = await UploadCloudinary(req.file.path);
+      const dominantColor = await getDominantColor(req.file.path);
+
       console.log('Image uploaded');
       const newShow = new Show({
         title,
         showDate,
         image: image_url,
+        dominantColor,
         location,
         buyticketlink,
       });
