@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>My Public Page</title>
+    <title>Editar Show</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
@@ -26,12 +26,12 @@
               />
             </figure>
             <ul class="menu-list pt-5">
-              <li><a href="/createSerie">CREATE SERIE</a></li>
-              <li><a href="/createShow">CREATE SHOW</a></li>
-              <li><a href="/deleteShow">DELETE SHOW</a></li>
-              <li><a href="/deleteSerie">DELETE SERIE</a></li>
-              <li><a href="/editShow">EDIT SHOW</a></li>
-              <li><a href="/editSerie">EDIT SERIE</a></li>
+              <li><a href="/createSerie">CREAR SERIE</a></li>
+              <li><a href="/createShow">CREAR SHOW</a></li>
+              <li><a href="/deleteShow">ELIMINAR SHOW</a></li>
+              <li><a href="/deleteSerie">ELIMINAR SERIE</a></li>
+              <li><a href="/editShow">EDITAR SHOW</a></li>
+              <li><a href="/editSerie">EDITAR SERIE</a></li>
             </ul>
           </aside>
         </div>
@@ -46,13 +46,13 @@
 
         // Get the day of the week
         const daysOfWeek = [
-          'Sunday',
-          'Monday',
-          'Tuesday',
-          'Wednesday',
-          'Thursday',
-          'Friday',
-          'Saturday',
+          'Domingo',
+          'Lunes',
+          'Martes',
+          'Miercoles',
+          'Jueves',
+          'Viernes',
+          'Sabado',
         ];
         const dayOfWeek = daysOfWeek[date.getUTCDay()];
 
@@ -61,18 +61,18 @@
 
         // Get the month
         const months = [
-          'January',
-          'February',
-          'March',
-          'April',
-          'May',
-          'June',
-          'July',
-          'August',
-          'September',
-          'October',
-          'November',
-          'December',
+          'Enero',
+          'Febrero',
+          'Marzo',
+          'Abril',
+          'Mayo',
+          'Junio',
+          'Julio',
+          'Agosto',
+          'Septiembre',
+          'Octubre',
+          'Noviembre',
+          'Diciembre',
         ];
         const month = months[date.getUTCMonth()];
 
@@ -155,7 +155,7 @@
 
           const button = document.createElement('button');
           button.classList.add('button', 'is-link');
-          button.textContent = 'Edit';
+          button.textContent = 'Editar';
           button.id = `buttonId-${show._id}`;
 
           button.addEventListener('click', () => {
@@ -229,7 +229,7 @@
         const nameLabel = document.createElement('span');
         nameLabel.classList.add('file-label');
         nameLabel.classList.add('is-size-7');
-        nameLabel.textContent = 'Drop new image';
+        nameLabel.textContent = 'Elije nueva Imagen';
 
         const form = document.createElement('div');
         form.classList.add('pl-5', 'has-text-centered-mobile', 'column');
@@ -301,7 +301,7 @@
 
         const update = document.createElement('button');
         update.classList.add('button', 'is-warning');
-        update.textContent = 'Update';
+        update.textContent = 'Aplicar';
         update.id = 'updateButton';
 
         update.addEventListener('click', () => {
@@ -337,7 +337,7 @@
               update.classList.remove('is-loading');
               cancel.disabled = 'false';
               if (response.status == 200) {
-                showAlert('success', 'Show Updated successfully!');
+                showAlert('success', 'Show editado con exito');
                 // Remove the current show element
                 article.remove();
 
@@ -345,17 +345,17 @@
                 const button = document.getElementById(`buttonId-${show._id}`);
                 button.style.display = '';
               } else {
-                showAlert('danger', 'Failed to edit show');
+                showAlert('danger', 'Error al editar Show intente mas tarde');
               }
             })
             .catch((error) => {
-              showAlert('danger', 'Failed to edit show');
+              showAlert('danger', 'Error al editar Show intente mas tarde');
             });
         });
 
         const cancel = document.createElement('button');
         cancel.classList.add('button', 'is-danger', 'ml-1');
-        cancel.textContent = 'Cancel';
+        cancel.textContent = 'Cancelar';
         cancel.id = 'updateButton';
 
         cancel.addEventListener('click', () => {

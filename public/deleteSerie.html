@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>My Public Page</title>
+    <title>Eliminar Serie</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
@@ -22,12 +22,12 @@
               />
             </figure>
             <ul class="menu-list pt-5">
-              <li><a href="/createSerie">CREATE SERIE</a></li>
-              <li><a href="/createShow">CREATE SHOW</a></li>
-              <li><a href="/deleteShow">DELETE SHOW</a></li>
-              <li><a href="/deleteSerie">DELETE SERIE</a></li>
-              <li><a href="/editShow">EDIT SHOW</a></li>
-              <li><a href="/editSerie">EDIT SERIE</a></li>
+              <li><a href="/createSerie">CREAR SERIE</a></li>
+              <li><a href="/createShow">CREAR SHOW</a></li>
+              <li><a href="/deleteShow">ELIMINAR SHOW</a></li>
+              <li><a href="/deleteSerie">ELIMINAR SERIE</a></li>
+              <li><a href="/editShow">EDITAR SHOW</a></li>
+              <li><a href="/editSerie">EDITAR SERIE</a></li>
             </ul>
           </aside>
         </div>
@@ -42,13 +42,13 @@
 
         // Get the day of the week
         const daysOfWeek = [
-          'Sunday',
-          'Monday',
-          'Tuesday',
-          'Wednesday',
-          'Thursday',
-          'Friday',
-          'Saturday',
+          'Domingo',
+          'Lunes',
+          'Martes',
+          'Miercoles',
+          'Jueves',
+          'Viernes',
+          'Sabado',
         ];
         const dayOfWeek = daysOfWeek[date.getUTCDay()];
 
@@ -57,18 +57,18 @@
 
         // Get the month
         const months = [
-          'January',
-          'February',
-          'March',
-          'April',
-          'May',
-          'June',
-          'July',
-          'August',
-          'September',
-          'October',
-          'November',
-          'December',
+          'Enero',
+          'Febrero',
+          'Marzo',
+          'Abril',
+          'Mayo',
+          'Junio',
+          'Julio',
+          'Agosto',
+          'Septiembre',
+          'Octubre',
+          'Noviembre',
+          'Diciembre',
         ];
         const month = months[date.getUTCMonth()];
 
@@ -152,7 +152,7 @@
 
           const button = document.createElement('button');
           button.classList.add('button', 'is-danger');
-          button.textContent = 'Delete';
+          button.textContent = 'Eliminar';
           button.id = 'deleteButton';
 
           button.addEventListener('click', () => {
@@ -162,11 +162,14 @@
             })
               .then((response) => {
                 if (response.status == 404) {
-                  showAlert('danger', 'Failed to delete serie');
+                  showAlert(
+                    'danger',
+                    'Error al eliminar el Programa intente mas tarde '
+                  );
                   button.classList.remove('is-loading');
                 }
                 if (response.status == 200) {
-                  showAlert('success', 'Serie Deleted successfully!');
+                  showAlert('success', 'Se elimino el Programa con exito!');
                   const serieDiv = document.getElementById(`${serie._id}`);
                   container.removeChild(serieDiv);
                   button.classList.remove('is-loading');
@@ -177,7 +180,7 @@
                 button.classList.remove('is-loading');
                 showAlert(
                   'danger',
-                  'An error occurred while deleting the serie.'
+                  'Error al eliminar el Programa intente mas tarde '
                 );
               });
           });

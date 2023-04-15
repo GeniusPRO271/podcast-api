@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>My Public Page</title>
+    <title>Crear Show</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
@@ -22,20 +22,20 @@
               />
             </figure>
             <ul class="menu-list pt-5">
-              <li><a href="/createSerie">CREATE SERIE</a></li>
-              <li><a href="/createShow">CREATE SHOW</a></li>
-              <li><a href="/deleteShow">DELETE SHOW</a></li>
-              <li><a href="/deleteSerie">DELETE SERIE</a></li>
-              <li><a href="/editShow">EDIT SHOW</a></li>
-              <li><a href="/editSerie">EDIT SERIE</a></li>
+              <li><a href="/createSerie">CREAR SERIE</a></li>
+              <li><a href="/createShow">CREAR SHOW</a></li>
+              <li><a href="/deleteShow">ELIMINAR SHOW</a></li>
+              <li><a href="/deleteSerie">ELIMINAR SERIE</a></li>
+              <li><a href="/editShow">EDITAR SHOW</a></li>
+              <li><a href="/editSerie">EDITAR SERIE</a></li>
             </ul>
           </aside>
         </div>
         <div class="column">
-          <h1 class="title">Create Show</h1>
+          <h1 class="title">Crear Show</h1>
           <form id="create-show-form">
             <div class="field">
-              <label for="title" class="label">Title</label>
+              <label for="title" class="label">Titulo del Show</label>
               <div class="control">
                 <input
                   type="text"
@@ -47,7 +47,7 @@
               </div>
             </div>
             <div class="field">
-              <label for="showDate" class="label">Day of the Show</label>
+              <label for="showDate" class="label">Fecha del Show</label>
               <div class="control">
                 <input
                   type="date"
@@ -59,7 +59,7 @@
               </div>
             </div>
             <div class="field">
-              <label for="image" class="label">Cover Image</label>
+              <label for="image" class="label">Afiche del Show</label>
               <div class="control">
                 <input
                   type="file"
@@ -72,7 +72,7 @@
               </div>
             </div>
             <div class="field">
-              <label for="location" class="label">Location</label>
+              <label for="location" class="label">Direccion</label>
               <div class="control">
                 <input
                   type="text"
@@ -84,7 +84,7 @@
               </div>
             </div>
             <div class="field">
-              <label for="ticketlink" class="label">Buy Ticket Link</label>
+              <label for="ticketlink" class="label">Link Venta de Ticket</label>
               <div class="control">
                 <input
                   type="text"
@@ -98,7 +98,7 @@
             <div class="field">
               <div class="control">
                 <button type="submit" id="submit-button" class="button is-link">
-                  Create
+                  Crear
                 </button>
               </div>
             </div>
@@ -132,16 +132,16 @@
           .then((response) => {
             button.classList.remove('is-loading');
             if (response.status === 201) {
-              showAlert('success', 'Show created successfully!');
+              showAlert('success', 'Show creado con exito!');
             } else {
-              showAlert('danger', 'An error occurred while creating the show.');
+              showAlert('danger', 'Error al crear el Show intente mas tarde');
             }
             console.log(response);
           })
           .catch((error) => {
             button.classList.remove('is-loading');
             console.error(error);
-            showAlert('danger', 'An error occurred while creating the show.');
+            showAlert('danger', 'Error al crear el Show intente mas tarde');
           });
         createShowForm.reset();
       });

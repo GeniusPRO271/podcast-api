@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>My Public Page</title>
+    <title>Crear Serie</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
@@ -22,20 +22,20 @@
               />
             </figure>
             <ul class="menu-list pt-5">
-              <li><a href="/createSerie">CREATE SERIE</a></li>
-              <li><a href="/createShow">CREATE SHOW</a></li>
-              <li><a href="/deleteShow">DELETE SHOW</a></li>
-              <li><a href="/deleteSerie">DELETE SERIE</a></li>
-              <li><a href="/editShow">EDIT SHOW</a></li>
-              <li><a href="/editSerie">EDIT SERIE</a></li>
+              <li><a href="/createSerie">CREAR PROGRAMA</a></li>
+              <li><a href="/createShow">CREAR SHOW</a></li>
+              <li><a href="/deleteShow">ELIMINAR SHOW</a></li>
+              <li><a href="/deleteSerie">ELIMINAR SERIE</a></li>
+              <li><a href="/editShow">EDITAR SHOW</a></li>
+              <li><a href="/editSerie">EDITAR SERIE</a></li>
             </ul>
           </aside>
         </div>
         <div class="column">
-          <h1 class="title">Create Serie</h1>
+          <h1 class="title">Crear Programa</h1>
           <form id="create-show-form">
             <div class="field">
-              <label for="title" class="label">Title</label>
+              <label for="title" class="label">Titulo del Programa</label>
               <div class="control">
                 <input
                   type="text"
@@ -47,23 +47,25 @@
               </div>
             </div>
             <div class="field">
-              <label class="label" for="serieDays">Serie Days</label>
+              <label class="label" for="serieDays">Dias de Emision</label>
               <div class="control">
                 <div class="select is-multiple">
                   <select id="serieDays" name="serieDays[]" multiple>
-                    <option value="monday">Monday</option>
-                    <option value="tuesday">Tuesday</option>
-                    <option value="wednesday">Wednesday</option>
-                    <option value="thursday">Thursday</option>
-                    <option value="friday">Friday</option>
-                    <option value="saturday">Saturday</option>
-                    <option value="sunday">Sunday</option>
+                    <option value="Lunes">Lunes</option>
+                    <option value="Martes">Martes</option>
+                    <option value="Miercoles">Miercoles</option>
+                    <option value="Jueves">Jueves</option>
+                    <option value="Viernes">Viernes</option>
+                    <option value="Sabado">Sabado</option>
+                    <option value="Domingo">Domingo</option>
                   </select>
                 </div>
               </div>
             </div>
             <div class="field">
-              <label for="serieStart" class="label">Serie Start and End</label>
+              <label for="serieStart" class="label"
+                >Hora de Inico - Final</label
+              >
               <div class="control">
                 <input
                   type="time"
@@ -83,7 +85,7 @@
               </div>
             </div>
             <div class="field">
-              <label for="imagesMain" class="label">Cover Image</label>
+              <label for="imagesMain" class="label">Poster del Programa</label>
               <div class="control">
                 <input
                   type="file"
@@ -96,7 +98,7 @@
               </div>
             </div>
             <div class="field">
-              <label for="sampleImages" class="label">Sample Images</label>
+              <label for="sampleImages" class="label">Extra Imagenes</label>
               <div class="control">
                 <input
                   type="file"
@@ -110,7 +112,9 @@
               </div>
             </div>
             <div class="field">
-              <label for="description" class="label">Description</label>
+              <label for="description" class="label"
+                >Descripcion del Programa</label
+              >
               <div class="control">
                 <textarea
                   class="textarea"
@@ -121,7 +125,7 @@
               </div>
             </div>
             <div class="mb-3">
-              <label for="members" class="label">Members</label>
+              <label for="members" class="label">Miembros</label>
               <div>
                 <input
                   type="checkbox"
@@ -152,15 +156,53 @@
               <div>
                 <input
                   type="checkbox"
-                  id="member3"
+                  id="member4"
                   name="members[]"
-                  value="Pao Molina"
+                  value="Paola Molina"
                 />
-                <label for="member3">Pao Molina</label>
+                <label for="member4">Paola Molina</label>
+              </div>
+              <div>
+                <input
+                  type="checkbox"
+                  id="member5"
+                  name="members[]"
+                  value="Esteban Araya"
+                />
+                <label for="member5">Esteban Araya</label>
+              </div>
+              <div>
+                <input
+                  type="checkbox"
+                  id="member6"
+                  name="members[]"
+                  value="Catalina Latorre"
+                />
+                <label for="member6">Catalina Latorre</label>
+              </div>
+              <div>
+                <input
+                  type="checkbox"
+                  id="member7"
+                  name="members[]"
+                  value="Cynthia Gallardo"
+                />
+                <label for="member7">Cynthia Gallardo</label>
+              </div>
+              <div>
+                <input
+                  type="checkbox"
+                  id="member8"
+                  name="members[]"
+                  value="Profe Castillo"
+                />
+                <label for="member8">Profe Castillo</label>
               </div>
             </div>
             <div class="field">
-              <label for="youtubeLink" class="label">Youtube Link</label>
+              <label for="youtubeLink" class="label"
+                >Youtube PlayList Link</label
+              >
               <div class="control">
                 <input
                   type="text"
@@ -184,7 +226,7 @@
             <div class="field">
               <div class="control">
                 <button type="submit" id="submit-button" class="button is-link">
-                  Create
+                  Crear
                 </button>
               </div>
             </div>
@@ -256,11 +298,11 @@
           .then((response) => {
             button.classList.remove('is-loading');
             if (response.status === 201) {
-              showAlert('success', 'Serie created successfully!');
+              showAlert('success', 'Programa creado con exito!');
             } else {
               showAlert(
                 'danger',
-                'An error occurred while creating the serie.'
+                'Error al crear el Programa intente mas tarde'
               );
             }
             console.log(response);
@@ -268,7 +310,7 @@
           .catch((error) => {
             button.classList.remove('is-loading');
             console.error(error);
-            showAlert('danger', 'An error occurred while creating the serie.');
+            showAlert('danger', 'Error al crear el Programa intente mas tarde');
           });
         createShowForm.reset();
       });
