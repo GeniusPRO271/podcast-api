@@ -4,11 +4,34 @@ const {
   DeleteImage,
 } = require('../cloudinary');
 const { Serie } = require('../models/series_models');
+const client = require('../redis');
 
 // Get all series
 async function getAll(req, res) {
-  const series = await Serie.find({});
-  res.json(series);
+  console.log('Geting series...');
+  const key = 'series_data';
+  try {
+    const cachedData = await client.get(key);
+    if (cachedData) {
+      // If cached data exists, return it immediately
+      console.log('Sending cached series Data..');
+      return res.status(200).json(JSON.parse(cachedData));
+    } else {
+      const series = await Serie.find({});
+      if (series) {
+        // Cache the result in Redis
+        console.log('Caching series data..');
+        client.setEx(key, 3600, JSON.stringify(series));
+        console.log('Sending series data..');
+        return res.status(200).json(series);
+      } else {
+        return res.status(500).json(err);
+      }
+    }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json(err);
+  }
 }
 
 // Create a new series

@@ -5,11 +5,34 @@ const {
   DeleteImage,
 } = require('../cloudinary');
 const getDominantColor = require('../dominantcolor');
+const client = require('../redis');
 
 // Get all shows
 async function getAll(req, res) {
-  const shows = await Show.find({}).sort({ showDate: 1 }); // Sort by showDate in ascending order
-  res.json(shows);
+  console.log('Geting shows...');
+  const key = 'shows_data';
+  try {
+    const cachedData = await client.get(key);
+    if (cachedData) {
+      // If cached data exists, return it immediately
+      console.log('Sending cached shows Data..');
+      return res.status(200).json(JSON.parse(cachedData));
+    } else {
+      const shows = await Show.find({}).sort({ showDate: 1 });
+      if (shows) {
+        // Cache the result in Redis
+        console.log('Caching shows data..');
+        client.setEx(key, 3600, JSON.stringify(shows));
+        console.log('Sending shows data..');
+        return res.status(200).json(shows);
+      } else {
+        return res.status(500).json(err);
+      }
+    }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json(err);
+  }
 }
 
 // Create a new show

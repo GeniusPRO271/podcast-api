@@ -7,7 +7,6 @@ const showsRouter = require('./routes/shows_routes');
 const { auth } = require('express-openid-connect');
 const profileRouter = require('./routes/profile_routes');
 const webRouter = require('./routes/web_routes');
-const { CleanUploadsDirectory } = require('./cloudinary');
 require('dotenv').config();
 
 const app = express();
@@ -48,7 +47,6 @@ app.use('/auth', authRouter);
 app.use('/profile', profileRouter);
 app.use('/series', seriesRouter);
 app.use('/shows', showsRouter);
-
 app.use((req, res, next) => {
   res.header('Content-Type', 'application/json');
   next();
