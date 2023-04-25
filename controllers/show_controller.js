@@ -13,12 +13,12 @@ async function getAll(req, res) {
   const key = 'shows_data';
   try {
     const cachedData = await client.get(key);
-    if (cachedData) {
+    const shows = await Show.find({}).sort({ showDate: 1 });
+    if (cachedData == JSON.stringify(shows)) {
       // If cached data exists, return it immediately
       console.log('Sending cached shows Data..');
       return res.status(200).json(JSON.parse(cachedData));
     } else {
-      const shows = await Show.find({}).sort({ showDate: 1 });
       if (shows) {
         // Cache the result in Redis
         console.log('Caching shows data..');

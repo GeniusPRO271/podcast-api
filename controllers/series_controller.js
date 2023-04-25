@@ -12,12 +12,12 @@ async function getAll(req, res) {
   const key = 'series_data';
   try {
     const cachedData = await client.get(key);
-    if (cachedData) {
+    const series = await Serie.find({});
+    if (cachedData == JSON.stringify(series)) {
       // If cached data exists, return it immediately
       console.log('Sending cached series Data..');
       return res.status(200).json(JSON.parse(cachedData));
     } else {
-      const series = await Serie.find({});
       if (series) {
         // Cache the result in Redis
         console.log('Caching series data..');
