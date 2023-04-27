@@ -125,7 +125,8 @@ async function update(req, res) {
           console.log('deleting ', oldImagesId);
         }
         for (let index = 0; index < req.files['images[]'].length; index++) {
-          url = await UploadCloudinary(req.files['imagesMain'][0].path);
+          url = await UploadCloudinary(req.files['images[]'][index].path);
+          console.log(req.files['images[]'][index].path);
           newSample.push(url);
           console.log('uploading ', url);
         }

@@ -83,6 +83,83 @@
                 />
               </div>
             </div>
+            <div class="mb-3">
+              <label for="members" class="label"
+                >Host del Show & Telonero</label
+              >
+              <div>
+                <input
+                  type="checkbox"
+                  id="member1"
+                  name="members[]"
+                  value="Luis Slimming"
+                />
+                <label for="member1">Luis Slimming</label>
+              </div>
+              <div>
+                <input
+                  type="checkbox"
+                  id="member2"
+                  name="members[]"
+                  value="Marcelo Valverde"
+                />
+                <label for="member2">Marcelo Valverde</label>
+              </div>
+              <div>
+                <input
+                  type="checkbox"
+                  id="member3"
+                  name="members[]"
+                  value="Hector Romero"
+                />
+                <label for="member3">Hector Romero</label>
+              </div>
+              <div>
+                <input
+                  type="checkbox"
+                  id="member4"
+                  name="members[]"
+                  value="Paola Molina"
+                />
+                <label for="member4">Paola Molina</label>
+              </div>
+              <div>
+                <input
+                  type="checkbox"
+                  id="member5"
+                  name="members[]"
+                  value="Esteban Araya"
+                />
+                <label for="member5">Esteban Araya</label>
+              </div>
+              <div>
+                <input
+                  type="checkbox"
+                  id="member6"
+                  name="members[]"
+                  value="Catalina Latorre"
+                />
+                <label for="member6">Catalina Latorre</label>
+              </div>
+              <div>
+                <input
+                  type="checkbox"
+                  id="member7"
+                  name="members[]"
+                  value="Cynthia Gallardo"
+                />
+                <label for="member7">Cynthia Gallardo</label>
+              </div>
+              <div>
+                <input
+                  type="checkbox"
+                  id="member8"
+                  name="members[]"
+                  value="Profe Castillo"
+                />
+                <label for="member8">Profe Castillo</label>
+              </div>
+            </div>
             <div class="field">
               <label for="ticketlink" class="label">Link Venta de Ticket</label>
               <div class="control">
@@ -120,7 +197,14 @@
         const image = formData.get('image');
         const location = formData.get('location');
         const buyticketlink = formData.get('ticketlink');
-
+        const checkboxes = document.querySelectorAll(
+          'input[type="checkbox"][name="members[]"]:checked'
+        );
+        let showsHosts = [];
+        checkboxes.forEach((checkbox) => {
+          showsHosts.push(checkbox.value);
+        });
+        formData.append('showsHosts', JSON.stringify(showsHosts));
         for (const [key, value] of formData.entries()) {
           console.log(`${key}: ${value}`);
         }

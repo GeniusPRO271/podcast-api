@@ -131,6 +131,13 @@
 
           const showDetailsP = document.createElement('p');
 
+          const showHosts = document.createElement('span');
+          showHosts.textContent = JSON.parse(show.showsHosts).map((d) => d);
+          showHosts.classList.add('is-size-6');
+          showDetailsP.appendChild(showHosts);
+
+          showDetailsP.appendChild(document.createElement('br'));
+
           const dateSpan = document.createElement('span');
           dateSpan.textContent = formatDate(show.showDate);
           dateSpan.id = `dateSpanId-${show._id}`;
@@ -271,6 +278,43 @@
           );
           dateFieldToChange.textContent = formatDate(dateInputValue);
         });
+        const members = [
+          'Luis Slimming',
+          'Marcelo Valverde',
+          'Hector Romero',
+          'Paola Molina',
+          'Esteban Araya',
+          'Catalina Latorre',
+          'Cynthia Gallardo',
+          'Profe Castillo',
+        ];
+
+        const membersDiv = document.createElement('div');
+        membersDiv.classList.add('mb-3');
+
+        for (let i = 0; i < members.length; i++) {
+          const memberDiv = document.createElement('div');
+          const memberInput = document.createElement('input');
+          memberInput.setAttribute('type', 'checkbox');
+          memberInput.setAttribute('id', 'member' + (i + 1));
+          memberInput.setAttribute('name', 'members[]');
+          memberInput.setAttribute('value', members[i]);
+
+          if (
+            JSON.parse(show.showsHosts) &&
+            JSON.parse(show.showsHosts).includes(members[i])
+          ) {
+            memberInput.checked = true;
+          }
+
+          const memberLabel = document.createElement('label');
+          memberLabel.setAttribute('for', 'member' + (i + 1));
+          memberLabel.textContent = members[i];
+
+          memberDiv.appendChild(memberInput);
+          memberDiv.appendChild(memberLabel);
+          membersDiv.appendChild(memberDiv);
+        }
 
         const locationForm = document.createElement('div');
         locationForm.classList.add('field');
@@ -321,6 +365,16 @@
           if (dateInput.value !== show.date && dateInput.value !== '') {
             formData.append('showDate', dateInput.value);
           }
+
+          //add members
+          const showsHosts = [];
+          const memberCheckboxes = document.querySelectorAll(
+            'input[name="members[]"]:checked'
+          );
+          memberCheckboxes.forEach((checkbox) => {
+            showsHosts.push(checkbox.value);
+          });
+          formData.append('showsHosts', JSON.stringify(showsHosts));
           // Check if location is different
           if (
             locationInput.value !== show.location &&
@@ -395,6 +449,8 @@
         dateControl.appendChild(dateInput);
         dateForm.appendChild(dateControl);
         form.appendChild(dateForm);
+
+        form.appendChild(membersDiv);
 
         locationControl.appendChild(locationInput);
         locationForm.appendChild(locationControl);

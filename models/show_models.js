@@ -26,6 +26,10 @@ const ShowSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  showsHosts: {
+    type: String,
+    required: true,
+  },
 });
 
 const Show = mongoose.model('Show', ShowSchema);

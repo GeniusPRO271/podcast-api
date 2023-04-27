@@ -125,6 +125,14 @@
 
           const showDetailsP = document.createElement('p');
 
+          const showHosts = document.createElement('span');
+
+          showHosts.textContent = JSON.parse(show.showsHosts).map((d) => d);
+          showHosts.classList.add('is-size-6');
+          showDetailsP.appendChild(showHosts);
+
+          showDetailsP.appendChild(document.createElement('br'));
+
           const dateSpan = document.createElement('span');
           dateSpan.textContent = formatDate(show.showDate);
           dateSpan.classList.add('is-size-6');

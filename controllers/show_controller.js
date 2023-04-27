@@ -40,9 +40,10 @@ async function getAll(req, res) {
 async function create(req, res) {
   console.log('create show');
   try {
-    const { title, showDate, location, buyticketlink } = req.body;
+    const { title, showDate, location, buyticketlink, showsHosts } = req.body;
 
     if (req.file) {
+      console.log(showsHosts);
       console.log(req.file.path);
       // If a file was uploaded, upload the file to Cloudinary and set the image URL on the new Show object
       const image_url = await UploadCloudinary(req.file.path);
@@ -56,6 +57,7 @@ async function create(req, res) {
         dominantColor,
         location,
         buyticketlink,
+        showsHosts,
       });
 
       // Save the new show data to the database
